@@ -16,67 +16,38 @@ public class WebController {
 @Autowired
 UserRepository repository;
 
-    @GetMapping("/")
+    @GetMapping("")
     public String showUserList(@RequestParam(name = "email", required = false, defaultValue = "") String email,
-                               @RequestParam(name = "email1", required = false, defaultValue = "") String email1,
-                               @RequestParam(name = "name2", required = false, defaultValue = "") String name2,
-                               @RequestParam(name = "surname3", required = false, defaultValue = "") String surname3,
-                               @RequestParam(name = "id4", required = false, defaultValue = "") Long id4,
-                               @RequestParam(name = "id5", required = false, defaultValue = "") Long id5,
-                               @RequestParam(name = "name6", required = false, defaultValue = "") String name6,
-                               @RequestParam(name = "email7", required = false, defaultValue = "") String email7,
-                               @RequestParam(name = "name8", required = false, defaultValue = "") String name8,
-                               @RequestParam(name = "email9", required = false, defaultValue = "") String email9,
-                               @RequestParam(name = "name10", required = false, defaultValue = "") String name10,
+                               @RequestParam(name = "name", required = false, defaultValue = "") String name,
+                               @RequestParam(name = "firstName", required = false, defaultValue = "") String firstName,
+                               @RequestParam(name = "lastName", required = false, defaultValue = "") String lastName,
+                               @RequestParam(name = "qid", required = false, defaultValue = "") Long qid,
+                               @RequestParam(name = "isSorted", required = false) boolean isSorted,
                                Model model) {
 
         List<User> users = repository.findAll();
 
+        // Check if `param` is not empty
+
         if (!email.isEmpty()) {
-            users = repository.findByEmailContainingOrderByNameDesc(email);
+            users = repository.findFirstByEmailContainingOrderBySurname(email);
         }
 
-        if (!email1.isEmpty()) {
-            users = repository.findByEmailEndsWith(email1);
+        else if (!firstName.isEmpty() && !lastName.isEmpty()) {
+            users = repository.findByNameAndSurname(firstName, lastName);
         }
 
-        if (!name2.isEmpty()) {
-            users = repository.findTop2ByNameStartsWith(name2);
+        else if (!name.isEmpty()) {
+            users = repository.findTop2ByNameStartsWith(name);
         }
 
-        if (!surname3.isEmpty()) {
-            users = repository.findBySurnameContaining(surname3);
+        else if (qid != null) {
+            users = repository.findByGreaterId(qid);
         }
 
-        if (id4 != null) {
-            users = repository.findByOrderById();
+        else if (isSorted) {
+            users = repository.findAllSorted();
         }
-        if (id5 != null) {
-            users = repository.findTop2ByOrderByIdDesc();
-        }
-
-        if (!name6.isEmpty()){
-            users = repository.findByOrderByNameDesc();
-        }
-
-        if (!email7.isEmpty()) {
-            users = repository.findByEmailNotContaining(email7);
-        }
-        if(!name8.isEmpty()){
-            users = repository.findAllX();
-        }
-
-        if(!email9.isEmpty()){
-            users = repository.findAllZ();
-        }
-
-        if (!name10.isEmpty()) {
-            users = repository.findAllC();
-        }
-
-
-
-
 
         model.addAttribute("users", users);
         return "index";

@@ -8,46 +8,27 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // Jpa Metods
-    List<User> findByEmailEndsWith(String email1);
+    User findByUsername(String username);
 
-    List<User> findTop2ByNameStartsWith(String name2);
+    /** Jpa Methods */
 
-    List<User> findBySurnameContaining(String surname3);
+    // find top 2 users where name starts with `name`
+    List<User> findTop2ByNameStartsWith(String name);
 
-    List<User> findByOrderById();
+    // find users by name and surname (?1, ?2)
+    List<User> findByNameAndSurname(String name, String surname);
 
-    List<User> findTop2ByOrderByIdDesc();
-
-    List<User> findByOrderByNameDesc();
-
-    List<User> findByEmailNotContaining(String email7);
-
-    List<User> findDistinctTop1ByName(String name10);
-
-    List<User> findByEmailContainingOrderByNameDesc(String email);
-
-
-    @Query(value = "select * from users where email like '%gmail.com' or email like '%narxoz.kz' or email like '%yandex.ru'", nativeQuery = true)
-    List<User> findAllZ();
-
-    @Query(value = "select * from users where name = surname", nativeQuery = true)
-    List<User> findAllX();
-
-    @Query(value = "select distinct on (name) * from users", nativeQuery = true)
-    List<User> findAllC();
+    // find users where email contains `email` sorted by surname (asc)
+    List<User> findFirstByEmailContainingOrderBySurname(String email);
 
 
 
-
-
-    // Native Query
-   /* @Query(value = "select * from users order by surname", nativeQuery = true)
+    // find users where name starts with `A` order by surname (asc)
+    @Query(value = "select * from users where name like 'A%' order by surname", nativeQuery = true)
     List<User> findAllSorted();
 
+    // find users where id greater than `qid`
     @Query(value = "select * from users where id > :qid", nativeQuery = true)
-    List<User> findByGreaterId(Long qid);*/
-
-
+    List<User> findByGreaterId(Long qid);
 
 }
